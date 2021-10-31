@@ -5,8 +5,9 @@ description = ""
 authors = ["vodkar <boombarah@mail.ru>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 traits = "^6.3.1"
+pydantic = "^1.8.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
