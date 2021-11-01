@@ -1,12 +1,9 @@
 from abc import ABC
+from pydantic import BaseModel
 
 
 class IHostIdentifier(ABC):
     pass
-
-
-class IPIdentidifier(ABC):
-    ip: str
 
 
 class MacIdentifier(ABC):
