@@ -12,11 +12,15 @@ pysnmp = "^4.4.12"
 Expression = "^1.1.0"
 paramiko = "^2.8.0"
 asyncssh = "^2.7.2"
+scapy = "^2.4.5"
+eventsourcing = "^9.1.7"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 black = "^21.9b0"
 pytest-asyncio = "^0.16.0"
+isort = "^5.10.1"
+mypy = "^0.910"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -24,3 +28,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 109
+
+[tool.isort]
+profile = "black"
