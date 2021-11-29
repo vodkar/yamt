@@ -12,10 +12,10 @@ class Host(YamtModel):
     mac: MacAddress
     name: str
 
-    @validator("mac")
-    def mac_vallidator(cls, v):
-        if isinstance(v, MacAddress):
-            return v
-        if isinstance(v, str):
-            return MacAddress(v)
-        raise TypeError(f"Unknown type for 'mac' field: {type(v)}")
+    # @validator("mac")
+    # def mac_vallidator(cls, v):
+    #     if isinstance(v, MacAddress):
+    #         return v
+    #     if isinstance(v, str):
+    #         return MacAddress(v)
+    #     raise TypeError(f"Unknown type for 'mac' field: {type(v)}")

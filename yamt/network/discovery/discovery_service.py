@@ -1,18 +1,19 @@
 from ipaddress import IPv4Network
 from typing import List
 
-from scapy.all import 
+from yamt.common.helpers import get_logger, timeit
+from yamt.hosts import Host
 
-from hosts import Host
-from common.helpers import timeit,get_logger
+from ..scan import Scanner
 
 
 class DiscoveryService:
 
     logger = get_logger(__name__)
 
+    def __init__(self, scanner: Scanner) -> None:
+        self.scanner = scanner
+
     @timeit(logger)
-    def discover_network(self, network: IPv4Network) -> List[Host]:
-
-
-    def arp_scan(network, ports):
+    async def discover_network(self, network: IPv4Network):
+        return self.scanner.scan_network(network)

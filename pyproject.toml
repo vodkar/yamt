@@ -14,6 +14,8 @@ paramiko = "^2.8.0"
 asyncssh = "^2.7.2"
 scapy = "^2.4.5"
 eventsourcing = "^9.1.7"
+prompt-toolkit = "^3.0.23"
+aioreactive = "^0.15.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

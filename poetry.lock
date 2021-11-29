@@ -1,4 +1,15 @@
 [[package]]
+name = "aioreactive"
+version = "0.15.0"
+description = "Async/await Reactive Tools for Python 3.9+"
+category = "main"
+optional = false
+python-versions = ">=3.9"
+
+[package.dependencies]
+expression = "*"
+
+[[package]]
 name = "asyncssh"
 version = "2.7.2"
 description = "AsyncSSH: Asynchronous SSHv2 client and server library"
@@ -272,6 +283,17 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "prompt-toolkit"
+version = "3.0.23"
+description = "Library for building powerful interactive command lines in Python"
+category = "main"
+optional = false
+python-versions = ">=3.6.2"
+
+[package.dependencies]
+wcwidth = "*"
+
+[[package]]
 name = "py"
 version = "1.10.0"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
@@ -475,16 +497,20 @@ python-versions = "*"
 name = "wcwidth"
 version = "0.2.5"
 description = "Measures the displayed width of unicode strings in a terminal"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "f4527fafeaa716653e353c284abb57abc092d1ba173d5f86e226b320a5308f19"
+content-hash = "ec6dc540b42533a41b6fe22beef262ba278794ba5b3bd7182a8d05aa765d0294"
 
 [metadata.files]
+aioreactive = [
+    {file = "aioreactive-0.15.0-py3-none-any.whl", hash = "sha256:3c7b903594e1eb15f0c16c1cfa96031e6c81371f999c50b081fe81dda463486a"},
+    {file = "aioreactive-0.15.0.tar.gz", hash = "sha256:f3724425faed6d6f41f1c10330246e16444d47670668bcc6c268946731b50a52"},
+]
 asyncssh = [
     {file = "asyncssh-2.7.2-py3-none-any.whl", hash = "sha256:18ab9ab416ba40dead5183fe6d13665aae63a29890fb7181c061ba8fc81bac1a"},
     {file = "asyncssh-2.7.2.tar.gz", hash = "sha256:96b09239c3cc134cfb66ae1138313fdb48cc390806f21f831dd44f8a1d8252a1"},
@@ -659,6 +685,10 @@ pluggy = [
 ply = [
     {file = "ply-3.11-py2.py3-none-any.whl", hash = "sha256:096f9b8350b65ebd2fd1346b12452efe5b9607f7482813ffca50c22722a807ce"},
     {file = "ply-3.11.tar.gz", hash = "sha256:00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3"},
+]
+prompt-toolkit = [
+    {file = "prompt_toolkit-3.0.23-py3-none-any.whl", hash = "sha256:5f29d62cb7a0ecacfa3d8ceea05a63cd22500543472d64298fc06ddda906b25d"},
+    {file = "prompt_toolkit-3.0.23.tar.gz", hash = "sha256:7053aba00895473cb357819358ef33f11aa97e4ac83d38efb123e5649ceeecaf"},
 ]
 py = [
     {file = "py-1.10.0-py2.py3-none-any.whl", hash = "sha256:3b80836aa6d1feeaa108e046da6423ab8f6ceda6468545ae8d02d9d58d18818a"},
