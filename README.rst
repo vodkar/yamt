@@ -2,4 +2,4 @@ YAMT
 ====
 Description
 -----------
-Yet, another monitoring tools
+Yet, another monitoring tool
