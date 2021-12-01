@@ -31,7 +31,7 @@ def indented(container: AnyContainer, amount: int = 2) -> AnyContainer:
     return VSplit([Label("", width=amount), container])
 
 
-async def run(discovery_notifier):
+async def run():
 
     selected_subject = AsyncSubject()
     hosts_layout = HostsLayoutV2([], selected_subject)
@@ -57,4 +57,4 @@ async def run(discovery_notifier):
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(run(None))
+    asyncio.get_event_loop().run_until_complete(run())

@@ -5,10 +5,10 @@ import scapy.all as scapy
 
 from yamt.hosts import Host
 
-from .scanner import Scanner
+from .scanner import DeviceScanner
 
 
-class ARPScanner(Scanner):
+class ARPScanner(DeviceScanner):
     timeout: int
 
     def __init__(self, timeout=3) -> None:

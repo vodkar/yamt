@@ -4,14 +4,14 @@ from typing import List
 from yamt.common.helpers import get_logger, timeit
 from yamt.hosts import Host
 
-from ..scan import Scanner
+from ..scan import DeviceScanner
 
 
 class DiscoveryService:
 
     logger = get_logger(__name__)
 
-    def __init__(self, scanner: Scanner) -> None:
+    def __init__(self, scanner: DeviceScanner) -> None:
         self.scanner = scanner
 
     @timeit(logger)
