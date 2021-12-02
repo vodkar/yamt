@@ -16,6 +16,19 @@ class TCPStealthUdpPortScanner(PortScanner):
         port_nums = list(port_nums)
         syn_on_ports = scapy.TCP(sport=sport, dport=port_nums, flags="S")
         syn_on_ips = scapy.IP(dst=list(map(str, ips))) / syn_on_ports
+        scapy.IP(dst="192.168.221.128", flags=2) / scapy.TCP(
+            sport=sport,
+            dport=631,
+            flags="S",
+            options=[
+                ("MSS", 0xFFD7),
+                ("SAckOK", b""),
+                ("Timestamp", (0x02180683, 0)),
+                ("NOP", None),
+                ("WScale", 7),
+            ],
+            window=65495,
+        ) / scapy.Ether(dst="00:00:00:00:00:00")
         for result in scapy.sr(syn_on_ips, timeout=3):
             if not result or (
                 result.haslayer(scapy.ICMP)
