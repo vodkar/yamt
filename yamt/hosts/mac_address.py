@@ -8,10 +8,6 @@ from yamt.common.model import YamtModel
 _MAC_REGEX = re.compile(r"^([0-9a-fA-F]{2}[:]){5}([0-9a-fA-F]{2})$")
 
 
-class IHostIdentifier(ABC):
-    pass
-
-
 class MacAddress(str):
     @classmethod
     def __get_validators__(cls):

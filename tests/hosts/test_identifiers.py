@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from yamt.hosts.host_identifier import MacAddress
+from yamt.hosts.mac_address import MacAddress
 
 
 def test_mac_identifier():

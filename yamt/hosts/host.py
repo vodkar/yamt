@@ -1,10 +1,8 @@
 from ipaddress import IPv4Address
 
-from pydantic import validator
-
 from yamt.common.model import YamtModel
 
-from .host_identifier import MacAddress
+from .mac_address import MacAddress
 
 
 class Host(YamtModel):

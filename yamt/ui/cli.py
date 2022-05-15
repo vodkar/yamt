@@ -50,7 +50,7 @@ async def run():
     app = Application(layout=layout)
 
     service = DiscoveryService(ARPScanner())
-    gen = service.scanner.scan_network(IPv4Network("192.168.1.0/24"))
+    gen = service.scanner.scan_network(IPv4Network("192.168.2.0/24"))
     asyncio.create_task(from_async_iterable(gen.__aiter__()).subscribe_async(hosts_layout))
 
     await asyncio.gather(app.run_async(), redraw_loop(app))
