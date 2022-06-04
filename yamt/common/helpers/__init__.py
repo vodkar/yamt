@@ -3,8 +3,12 @@ import time
 from functools import wraps
 
 
-def get_logger(name: str = None):
+def get_logger(name: str | None = None, prefix: str | None = None):
     logger = logging.getLogger(name)
+    if prefix:
+        logging.basicConfig(format=f"%(asctime)s - [%(levelname)s] - [{prefix}]")
+    if prefix:
+        logging.basicConfig(format=f"%(asctime)s - [%(levelname)s]")
     logger.setLevel(logging.INFO)
     return logger
 
