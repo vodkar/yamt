@@ -1,4 +1,4 @@
-from common.model import YamtModel
+from yamt.common.model import YamtModel
 
 from .host import Host
 

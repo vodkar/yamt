@@ -17,10 +17,11 @@ class MacAddress(str):
         yield cls.validate
 
     @classmethod
-    def validate(cls, mac: str) -> None:
+    def validate(cls, mac: str) -> str:
         mac = mac.strip()
         if not re.search(_MAC_REGEX, mac):
             raise ValueError(f"Unkown mac address format: {mac}", cls)
+        return mac
 
     def __repr__(self) -> str:
         return f"MacAddress({super().__repr__})"

@@ -1,9 +1,8 @@
-from importlib import import_module
 from ipaddress import IPv4Network
 
 from pytest import fixture
 
-import_module("tests.fixtures")
+from .hosts.fixtures import *
 
 
 @fixture
