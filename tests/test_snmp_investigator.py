@@ -1,6 +1,8 @@
-from yamt.investigation.snmp_investigator import SNMPInvestigator
 from ipaddress import IPv4Address
+
 import pytest
+
+from yamt.scanner.snmp_investigator import SNMPInvestigator
 
 
 @pytest.mark.asyncio

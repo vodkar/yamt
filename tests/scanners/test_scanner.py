@@ -1,6 +1,6 @@
 from pytest import fixture, mark
 
-from yamt.network.scan.arp_scan import ARPScanner
+from yamt.hosts.services.arp_scan import ARPScanner
 
 
 @fixture

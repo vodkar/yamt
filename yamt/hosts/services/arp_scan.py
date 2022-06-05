@@ -1,17 +1,17 @@
 from ipaddress import IPv4Network
-from typing import AsyncGenerator, Generator, List
+from typing import AsyncGenerator
 
 import scapy.all as scapy
 
 from yamt.hosts import Host
 
-from .scanner import DeviceScanner
+from .ip_host_scanner import IPHostScanner
 
 
-class ARPScanner(DeviceScanner):
+class ARPScanner(IPHostScanner):
     timeout: int
 
-    def __init__(self, timeout=3) -> None:
+    def __init__(self, timeout: int=3) -> None:
         self.timeout = timeout
         super().__init__()
 

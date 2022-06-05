@@ -1,2 +1,2 @@
-from .arp_scan import ARPScanner
+from ...hosts.services.arp_scan import ARPScanner
 from .scanner import DeviceScanner
