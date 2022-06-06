@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 from ipaddress import IPv4Network
-from typing import AsyncGenerator
+from typing import AsyncGenerator, AsyncIterator
 
 from ..models import Host
 
 
 class IPHostScanner(ABC):
     @abstractmethod
-    async def scan_network(self, network: IPv4Network) -> AsyncGenerator[Host, None]:
-        pass
+    async def scan_network(self, network: IPv4Network) -> AsyncIterator[Host]:
+        # mypy hack
+        if False:
+            yield Host()

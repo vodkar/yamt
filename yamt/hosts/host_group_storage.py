@@ -17,7 +17,7 @@ class HostGroupStorage:
         self._cached = False
         self._host_storage = host_storage
         self._logger = get_logger(__name__, prefix="HostGroupStorage")
-        
+
         list(self.get_host_groups())
 
     def get_host_groups(self) -> Generator[HostGroup, None, None]:
@@ -47,7 +47,7 @@ class HostGroupStorage:
         with open(self._yaml_path, "w") as f:
             to_save: list[dict[str, Any]] = []
             for group in self._host_groups:
-                to_save.append({"name": group.name, "hosts": [{"ip":     host.ip} for host in group.hosts]})
+                to_save.append({"name": group.name, "hosts": [{"ip": host.ip} for host in group.hosts]})
             yaml.dump(to_save, f, yaml.Dumper)
 
     @contextmanager
@@ -59,4 +59,3 @@ class HostGroupStorage:
             Path(self._yaml_path).touch()
             with open(self._yaml_path, "r") as f:
                 yield []
-            

@@ -1,5 +1,5 @@
 from ipaddress import IPv4Network
-from typing import AsyncGenerator
+from typing import AsyncGenerator, AsyncIterator
 
 import scapy.all as scapy
 
@@ -11,11 +11,11 @@ from .ip_host_scanner import IPHostScanner
 class ARPScanner(IPHostScanner):
     timeout: int
 
-    def __init__(self, timeout: int=3) -> None:
+    def __init__(self, timeout: int = 3) -> None:
         self.timeout = timeout
         super().__init__()
 
-    async def scan_network(self, network: IPv4Network) -> AsyncGenerator[Host, None]:
+    async def scan_network(self, network: IPv4Network) -> AsyncIterator[Host]:
         frame = scapy.Ether(dst="ff:ff:ff:ff:ff:ff") / scapy.ARP(pdst=str(network))
         results, _ = scapy.srp(frame, timeout=self.timeout, verbose=False)
         for _, recieved in results:

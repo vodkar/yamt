@@ -16,7 +16,7 @@ from prompt_toolkit.widgets import (
     TextArea,
 )
 
-from yamt.hosts.host import Host, MacAddress
+from yamt.hosts import Host, MacAddress
 from yamt.network.discovery import DiscoveryService
 from yamt.network.scan import ARPScanner
 from yamt.ui.layouts.hosts_layout import HostInfoWindow, HostsLayout, HostsLayoutV2
