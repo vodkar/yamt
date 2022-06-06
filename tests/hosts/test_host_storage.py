@@ -1,11 +1,9 @@
 from ipaddress import IPv4Address
 
-import pytest
 import yaml
 from faker import Faker
 
 from yamt.hosts import Host, HostStorage, MacAddress
-from yamt.hosts.host import Host
 from yamt.hosts.host_storage import HostStorage
 
 

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from ipaddress import IPv4Address, IPv4Network
 from typing import AsyncGenerator, Iterable
 
-from yamt.hosts.host import Host
+from yamt.hosts import Host
 
 
 class DeviceScanner(ABC):

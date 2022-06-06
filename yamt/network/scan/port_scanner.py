@@ -1,6 +1,4 @@
-from functools import reduce
 from ipaddress import IPv4Address
-from operator import truediv
 from typing import AsyncGenerator, Iterable
 
 import scapy.all as scapy
