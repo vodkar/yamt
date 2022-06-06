@@ -5,8 +5,9 @@ from typing import Any, Generator
 import yaml
 
 from yamt.common.helpers import get_logger
-from yamt.hosts.host_group import HostGroup
-from yamt.hosts.host_storage import HostStorage
+
+from .host_storage import HostStorage
+from .models import HostGroup
 
 
 class HostGroupStorage:

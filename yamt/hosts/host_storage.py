@@ -6,7 +6,8 @@ from typing import Any, Generator
 import yaml
 
 from yamt.common.helpers import get_logger
-from yamt.hosts.host import Host
+
+from .models import Host
 
 
 class HostStorage:
