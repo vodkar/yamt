@@ -1,5 +1,5 @@
 from ipaddress import IPv4Address
-from typing import AsyncGenerator, Iterable
+from typing import AsyncGenerator, AsyncIterable, Iterable
 
 import scapy.all as scapy
 
@@ -7,40 +7,21 @@ from .scanner import PortScanner
 
 
 class TCPStealthUdpPortScanner(PortScanner):
+    def __init__(self, timeout: int = 3):
+        self._timeout = timeout
+
     async def scan_ports(
-        self, ips: Iterable[IPv4Address], port_nums: Iterable[int]
-    ) -> AsyncGenerator[tuple[IPv4Address, dict[int, list[str]]], None]:
+        self, ips: AsyncIterable[IPv4Address], port_nums: Iterable[int]
+    ) -> AsyncGenerator[tuple[IPv4Address, list[int]], None]:
         sport = scapy.RandShort()
-        port_nums = list(port_nums)
-        syn_on_ports = scapy.TCP(sport=sport, dport=port_nums, flags="S")
-        syn_on_ips = scapy.IP(dst=list(map(str, ips))) / syn_on_ports
-        scapy.IP(dst="192.168.221.128", flags=2) / scapy.TCP(
-            sport=sport,
-            dport=631,
-            flags="S",
-            options=[
-                ("MSS", 0xFFD7),
-                ("SAckOK", b""),
-                ("Timestamp", (0x02180683, 0)),
-                ("NOP", None),
-                ("WScale", 7),
-            ],
-            window=65495,
-        ) / scapy.Ether(dst="00:00:00:00:00:00")
-        for result in scapy.sr(syn_on_ips, timeout=3):
-            if not result or (
-                result.haslayer(scapy.ICMP)
-                and (icmp := result.getlayer(scapy.ICMP))
-                and icmp.type == 3
-                and icmp.code in [1, 2, 3, 9, 10, 13]
-            ):
-                yield None, None
-            else:
-                flags = result.get_layer(TCP).flags
-                if flags == 0x12:
-                    scapy.sr
-                    yield None, "tcp"
-                elif flags == 0x14:
-                    yield None, None
-                else:
-                    raise Exception("Unknown answer!")
+        async for ip in ips:
+            opened_ports: list[int] = []
+            for port in port_nums:
+                syn_on_ips = scapy.IP(dst=str(ip)) / scapy.TCP(sport=sport, dport=port, flags="S")
+                result = scapy.sr(syn_on_ips, timeout=self._timeout)
+                if result and result.haslayer(TCP) and result.getlayer(TCP).flags == 0x12:
+                    scapy.sr(
+                        scapy.IP(dst=str(ip)) / scapy.TCP(sport=sport, dport=port, flags="S"), timeout=self._timeout
+                    )
+                    opened_ports.append(port)
+            yield ip, opened_ports

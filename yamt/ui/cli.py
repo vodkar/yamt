@@ -3,7 +3,7 @@ from ipaddress import IPv4Address, IPv4Network
 
 from aioreactive import AsyncSubject, from_async_iterable
 from prompt_toolkit import Application
-from prompt_toolkit.layout.containers import AnyContainer, VSplit, Window
+from prompt_toolkit.layout.containers import AnyContainer, HSplit, VSplit, Window
 from prompt_toolkit.layout.controls import BufferControl, FormattedTextControl
 from prompt_toolkit.layout.layout import Layout
 from prompt_toolkit.widgets import (
@@ -16,10 +16,8 @@ from prompt_toolkit.widgets import (
     TextArea,
 )
 
-from yamt.hosts import Host, MacAddress
-from yamt.network.discovery import DiscoveryService
-from yamt.network.scan import ARPScanner
-from yamt.ui.layouts.hosts_layout import HostInfoWindow, HostsLayout, HostsLayoutV2
+from yamt.hosts.services import ARPScanner
+from yamt.ui.layouts import HostInfoWindow, HostManagerWindow, HostsLayoutV2, HostWindow
 
 
 async def redraw_loop(app):
@@ -32,16 +30,13 @@ def indented(container: AnyContainer, amount: int = 2) -> AnyContainer:
 
 
 async def run():
-
-    selected_subject = AsyncSubject()
-    hosts_layout = HostsLayoutV2([], selected_subject)
-    host_info_window = HostInfoWindow()
-    await selected_subject.subscribe_async(host_info_window)
+    host_window = HostWindow(HostManagerWindow(), HostInfoWindow())
+    hosts_layout = HostsLayoutV2([], host_window)
     root_container = VSplit(
         [
-            indented(hosts_layout),
+            hosts_layout,
             Window(width=1, char="|"),
-            host_info_window,
+            host_window,
         ]
     )
 
@@ -49,12 +44,12 @@ async def run():
 
     app = Application(layout=layout)
 
-    service = DiscoveryService(ARPScanner())
-    gen = service.scanner.scan_network(IPv4Network("192.168.2.0/24"))
+    service = ARPScanner()
+    gen = service.scan_network(IPv4Network("192.168.0.0/24"))
     asyncio.create_task(from_async_iterable(gen.__aiter__()).subscribe_async(hosts_layout))
 
     await asyncio.gather(app.run_async(), redraw_loop(app))
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(run())
+    asyncio.new_event_loop().run_until_complete(run())
