@@ -2,7 +2,7 @@ from ipaddress import IPv4Address
 
 from pytest import mark
 
-from yamt.network.scan.port_scanner import TCPStealthUdpPortScanner
+from yamt.tcp_services.scanner.port_scanner import TCPStealthUdpPortScanner
 
 
 @mark.asyncio

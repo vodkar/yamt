@@ -11,7 +11,6 @@ _OS_RELEASE_REGEX = r"""((VERSION=\"(?P<version>[\w\s]*)\")|(ID=(?P<id>[\w\s]*)\
 class LinuxMetricManager(SSHMetricManager, OSVersionMetric):
     def __init__(self, ssh_manager: SSHManager) -> None:
         self._manager = ssh_manager
-        super().__init__()
 
     async def get_os_version(self) -> OSVersion:
         os_rel_result = await self._manager.execute("egrep '^(VERSION|ID|ID_LIKE|NAME)=' /etc/os-release")

@@ -1,4 +1,3 @@
-from prompt_toolkit.application import get_app
 from prompt_toolkit.layout import FormattedTextControl, Window
 
 from yamt.hosts import Host
@@ -16,6 +15,3 @@ class HostInfoWindow(Window):
     def render_host_text(self, host: Host):
         self._current_text = f"IP: {host.ip}\nMAC: {host.mac}\nName: {host.name}"
         self.render()
-
-    def focus(self):
-        get_app().layout.focus(self)

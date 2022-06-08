@@ -17,7 +17,12 @@ from prompt_toolkit.widgets import (
 )
 
 from yamt.hosts.services import ARPScanner
-from yamt.ui.layouts import HostInfoWindow, HostManagerWindow, HostsLayoutV2, HostWindow
+from yamt.operation_systems.metrics.ssh import LinuxMetricManager
+from yamt.operation_systems.routers.ssh import LinuxSSHOutputVerifier, SSHRouter
+from yamt.tcp_services.scanner.stealth_port_scanner import TCPStealthPortScanner
+from yamt.tcp_services.scanner.tcp_port_scanner import TCPPortScanner
+from yamt.tcp_services.services.ssh.storage import SSHCredentialStorage
+from yamt.ui.layouts import HostInfoWindow, HostManagerPane, HostsLayoutV2, HostWindow
 
 
 async def redraw_loop(app):
@@ -30,8 +35,17 @@ def indented(container: AnyContainer, amount: int = 2) -> AnyContainer:
 
 
 async def run():
-    host_window = HostWindow(HostManagerWindow(), HostInfoWindow())
-    hosts_layout = HostsLayoutV2([], host_window)
+    host_window = HostWindow(HostManagerPane(), HostInfoWindow())
+    tcp_scanner: TCPPortScanner = TCPStealthPortScanner()
+    ssh_router = SSHRouter()
+    ssh_router.register_metric(LinuxSSHOutputVerifier(), LinuxMetricManager)
+    hosts_layout = HostsLayoutV2(
+        [],
+        host_window,
+        tcp_scanner,
+        SSHCredentialStorage("ssh.yaml"),
+        ssh_router,
+    )
     root_container = VSplit(
         [
             hosts_layout,
@@ -42,7 +56,7 @@ async def run():
 
     layout = Layout(root_container)
 
-    app = Application(layout=layout)
+    app = Application(layout=layout, full_screen=True)
 
     service = ARPScanner()
     gen = service.scan_network(IPv4Network("192.168.0.0/24"))
