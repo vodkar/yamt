@@ -1,9 +1,23 @@
 const axios = require('axios').default;
 
-export interface Host {
-    ip: string;
-    name: string;
+interface ModelWithUUID {
+    id: string;
+
 }
+
+export interface IPInterface extends ModelWithUUID {
+    ip: string;
+}
+
+export interface NetworkCard extends ModelWithUUID {
+    mac: string;
+    interfaces: IPInterface[]
+}
+export interface Host extends ModelWithUUID {
+    name: string;
+    cards: NetworkCard[]
+}
+
 
 export type THostList = Host[]
 
