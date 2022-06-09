@@ -1,10 +1,10 @@
 from prompt_toolkit.layout import HSplit, Window
 
+from yamt.cli_ui.layouts.host_info_window import HostInfoWindow
 from yamt.hosts.models.host import Host
 from yamt.operation_systems.routers.ssh.router import SSHRouter
 from yamt.tcp_services.scanner.tcp_port_scanner import TCPPortScanner
 from yamt.tcp_services.services.ssh.storage import SSHCredentialStorage
-from yamt.ui.layouts.host_info_window import HostInfoWindow
 
 from .host_manager_window import HostManagerPane
 

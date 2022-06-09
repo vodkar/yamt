@@ -22,7 +22,7 @@ from yamt.operation_systems.routers.ssh import LinuxSSHOutputVerifier, SSHRouter
 from yamt.tcp_services.scanner.stealth_port_scanner import TCPStealthPortScanner
 from yamt.tcp_services.scanner.tcp_port_scanner import TCPPortScanner
 from yamt.tcp_services.services.ssh.storage import SSHCredentialStorage
-from yamt.ui.layouts import HostInfoWindow, HostManagerPane, HostsLayoutV2, HostWindow
+from yamt.cli_ui.layouts import HostInfoWindow, HostManagerPane, HostsLayoutV2, HostWindow
 
 
 async def redraw_loop(app):

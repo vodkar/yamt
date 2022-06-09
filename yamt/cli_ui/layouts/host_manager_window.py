@@ -8,7 +8,7 @@ from yamt.hosts.models.host import Host
 from yamt.operation_systems.routers.ssh.router import SSHRouter
 from yamt.tcp_services.scanner.tcp_port_scanner import TCPPortScanner
 from yamt.tcp_services.services.ssh.storage import SSHCredentialStorage
-from yamt.ui.host_actions import get_host_options
+from yamt.cli_ui.host_actions import get_host_options
 
 from ..buttons import HostActionButton
 from .utils import HasFocusMixin

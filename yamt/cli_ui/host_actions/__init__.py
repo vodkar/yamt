@@ -1,10 +1,10 @@
+from yamt.cli_ui.host_actions.popup_action import OSVersionAction, PopupAction
 from yamt.hosts import Host
 from yamt.operation_systems.metrics.abc import OSVersionMetric, SSHMetricManager
 from yamt.operation_systems.routers.ssh.router import SSHRouter
 from yamt.tcp_services.scanner import TCPPortScanner
 from yamt.tcp_services.services.ssh import SSHCredentialStorage, SSHManager
 from yamt.tcp_services.services.ssh import connect as ssh_connect
-from yamt.ui.host_actions.popup_action import OSVersionAction, PopupAction
 
 from ..buttons import HostActionButton
 from .name_action import InputSSHCredsAction, NameActionButton
