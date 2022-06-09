@@ -8,6 +8,8 @@ from pydantic import IPvAnyAddress
 
 from yamt.common.helpers import get_logger
 from yamt.hosts.models.ip_interface import IPInterface
+from yamt.hosts.models.mac_address import MacAddress
+from yamt.hosts.models.network_card import NetworkCard
 
 from .models import Host
 
@@ -28,10 +30,10 @@ class HostStorage:
             self._interfaces = []
             self._logger.debug("get_hosts not cached, retrieve hosts from file")
             with self._open_yaml() as data:
-                for host in data["hosts"]:
+                for host in data.get("hosts", []):
                     self._logger.debug(f"Found host: {host}")
                     self._hosts.append(Host(**host))
-                for inter in data["interfaces"]:
+                for inter in data.get("interfaces", []):
                     self._logger.debug(f"Found interface: {inter}")
                     self._interfaces.append(IPInterface(**inter))
             self._cached = True
@@ -40,7 +42,15 @@ class HostStorage:
 
     def add_hosts(self, hosts: list[Host]) -> None:
         for host in hosts:
-            if host in self._hosts:
+            if self.get_host(host.id):
+                continue
+            if hosts_with_same_macs := [
+                (same_host, card.mac) for card in host.cards if (same_host := self.get_host_by_mac(card.mac))
+            ]:
+                for same_host, mac in hosts_with_same_macs:
+                    if (same_card := same_host.get_card_by_mac(mac)) and (host_card := host.get_card_by_mac(mac)):
+                        for interface in host_card.interfaces:
+                            self.add_interface_to_host_card(same_host.id, same_card.id, interface)
                 continue
             self._logger.debug(f"Added host: {host.json()}")
             self._hosts.append(host)
@@ -52,15 +62,42 @@ class HostStorage:
                 return host
         return None
 
-    def get_interface(self, ip: IPvAnyAddress) -> IPInterface | None:
+    def get_host_by_mac(self, mac: MacAddress) -> Host | None:
+        for host in self._hosts:
+            if any(mac == card.mac for card in host.cards):
+                return host
+        return None
+
+    def add_network_card_to_host(self, host_id: UUID, card: NetworkCard):
+        if host := self.get_host(host_id):
+            if host.get_card_by_mac(card.mac):
+                return
+            host.cards.append(card)
+            self._save()
+        else:
+            raise ValueError("Host not found!")
+
+    def add_interface_to_host_card(self, host_id: UUID, card_id: UUID, interface: IPInterface):
+        if (host := self.get_host(host_id)) and (card := host.get_card_by_id(card_id)):
+            if card.get_interface_by_ip(interface.ip):
+                return
+            card.interfaces.append(interface)
+            self._save()
+        else:
+            raise ValueError("Host and card not found!")
+
+    def get_interfaces(self) -> Iterable[IPInterface]:
         for interface in self._interfaces:
-            if interface.ip == ip:
-                return interface
+            yield interface
         for host in self._hosts:
             for card in host.cards:
                 for interface in card.interfaces:
-                    if interface.ip == ip:
-                        return interface
+                    yield interface
+
+    def get_interface(self, ip: IPvAnyAddress) -> IPInterface | None:
+        for interface in self.get_interfaces():
+            if interface.ip == ip:
+                return interface
         return None
 
     def add_interfaces(self, interfaces: Iterable[IPInterface]):

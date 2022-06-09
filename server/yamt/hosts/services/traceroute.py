@@ -1,4 +1,4 @@
-from tabnanny import verbose
+from ipaddress import IPv4Address
 from typing import Generator, Iterable
 
 from pydantic import IPvAnyAddress
@@ -12,4 +12,4 @@ def traceroute(ips: Iterable[IPvAnyAddress]) -> Generator[list[IPvAnyAddress], N
 
 def _traceroute(ip: IPvAnyAddress) -> list[IPvAnyAddress]:
     ans, _ = scapy.traceroute(str(ip), verbose=False, maxttl=20)
-    return [IPvAnyAddress(rcv.dst) for _, rcv in ans] + [ip]
+    return [IPv4Address(rcv.dst) for _, rcv in ans] + [ip]
