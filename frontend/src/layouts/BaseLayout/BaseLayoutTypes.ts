@@ -1,6 +1,5 @@
 
 export interface IBaseLayout {
-    left?: React.ReactNode;
-    center: React.ReactNode;
+    left: React.ReactNode;
     right?: React.ReactNode;
 }

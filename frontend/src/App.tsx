@@ -1,9 +1,10 @@
 import React from "react";
 import "./App.css";
-import { NetworkGrid } from "./components/NetworkGrid";
+import MainPage from "./components/MainPage";
+
 
 function App() {
-  return <NetworkGrid />;
+  return <MainPage />;
 }
 
 export default App;
