@@ -16,7 +16,7 @@ class HostStorage:
         self._cached = False
         self._logger = get_logger(__name__, prefix="HostStorage")
         self._hosts: list[Host] = []
-        
+
         list(self.get_hosts())
 
     def get_hosts(self) -> Generator[Host, None, None]:
@@ -33,6 +33,8 @@ class HostStorage:
 
     def add_hosts(self, hosts: list[Host]) -> None:
         for host in hosts:
+            if host in self._hosts:
+                continue
             self._logger.debug(f"Added host: {host.json()}")
             self._hosts.append(host)
         self._save()
@@ -56,4 +58,3 @@ class HostStorage:
             Path(self._yaml_path).touch()
             with open(self._yaml_path, "r") as f:
                 yield []
-            

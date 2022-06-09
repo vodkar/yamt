@@ -1,7 +1,7 @@
 #!/usr/bin/python
-import asyncio
+import uvicorn
 
-from yamt.cli_ui import run
+from yamt.api import app
 
 if __name__ == "__main__":
-    asyncio.new_event_loop().run_until_complete(run())
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, debug=True)
