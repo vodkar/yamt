@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from ipaddress import IPv4Network
-from typing import AsyncGenerator, AsyncIterator
+from typing import AsyncIterator
 
 from ..models import Host
 

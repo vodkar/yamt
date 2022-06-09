@@ -1,5 +1,5 @@
 from ipaddress import IPv4Network
-from typing import AsyncGenerator, AsyncIterator
+from typing import AsyncIterator
 
 import scapy.all as scapy
 
@@ -19,4 +19,4 @@ class ARPScanner(IPHostScanner):
         frame = scapy.Ether(dst="ff:ff:ff:ff:ff:ff") / scapy.ARP(pdst=str(network))
         results, _ = scapy.srp(frame, timeout=self.timeout, verbose=False)
         for _, recieved in results:
-            yield Host(ip=recieved.payload.psrc, mac=recieved.src, name="")
+            yield Host.create_simple_host(ip=recieved.payload.psrc, mac=recieved.src, name="")

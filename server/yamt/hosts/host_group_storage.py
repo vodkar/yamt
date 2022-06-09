@@ -23,14 +23,18 @@ class HostGroupStorage:
     def get_host_groups(self) -> Generator[HostGroup, None, None]:
         if not self._cached:
             self._logger.debug("get_host_groups not cached, retrieve groups from file")
-            self._host_groups: list[HostGroup] = []
+            self._host_groups = []
             with self._open_yaml() as data:
                 for host_group in data:
                     self._logger.debug(f"Found host group: {host_group}")
                     self._host_groups.append(
                         HostGroup(
                             name=host_group["name"],
-                            hosts=[self._host_storage.get_host(host["ip"]) for host in host_group["hosts"]],
+                            hosts=[
+                                _host
+                                for host in host_group["hosts"]
+                                if (_host := self._host_storage.get_host(host["id"]))
+                            ],
                         )
                     )
             self._cached = True
@@ -47,7 +51,7 @@ class HostGroupStorage:
         with open(self._yaml_path, "w") as f:
             to_save: list[dict[str, Any]] = []
             for group in self._host_groups:
-                to_save.append({"name": group.name, "hosts": [{"ip": host.ip} for host in group.hosts]})
+                to_save.append({"name": group.name, "hosts": [{"id": host.id} for host in group.hosts]})
             yaml.dump(to_save, f, yaml.Dumper)
 
     @contextmanager

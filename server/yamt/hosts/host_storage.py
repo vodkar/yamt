@@ -1,7 +1,7 @@
 from contextlib import contextmanager
-from ipaddress import IPv4Address
 from pathlib import Path
 from typing import Any, Generator
+from uuid import UUID
 
 import yaml
 
@@ -39,9 +39,9 @@ class HostStorage:
             self._hosts.append(host)
         self._save()
 
-    def get_host(self, ip: IPv4Address) -> Host | None:
+    def get_host(self, id: UUID) -> Host | None:
         for host in self._hosts:
-            if host.ip == ip:
+            if host.id == id:
                 return host
         return None
 

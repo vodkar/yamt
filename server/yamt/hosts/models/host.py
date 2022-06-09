@@ -1,19 +1,18 @@
-from ipaddress import IPv4Address
+from __future__ import annotations
 
-from yamt.common.model import YamtModel
+from pydantic import IPvAnyAddress
 
-from .mac_address import MacAddress
+from yamt.common.model import YamtModelWithId
+from yamt.hosts.models.ip_interface import IPInterface
+from yamt.hosts.models.mac_address import MacAddress
+
+from .network_card import NetworkCard
 
 
-class Host(YamtModel):
-    ip: IPv4Address
-    mac: MacAddress
+class Host(YamtModelWithId):
     name: str
+    cards: list[NetworkCard]
 
-    # @validator("mac")
-    # def mac_vallidator(cls, v):
-    #     if isinstance(v, MacAddress):
-    #         return v
-    #     if isinstance(v, str):
-    #         return MacAddress(v)
-    #     raise TypeError(f"Unknown type for 'mac' field: {type(v)}")
+    @classmethod
+    def create_simple_host(cls, ip: IPvAnyAddress | str, mac: MacAddress | str, name: str = "") -> Host:
+        return cls(name=name, cards=[NetworkCard(mac=MacAddress(mac), interfaces=[IPInterface(ip=ip)])])
