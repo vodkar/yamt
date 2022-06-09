@@ -21,11 +21,11 @@ function HostInfoPane(props: IHostInfoPaneProps) {
                 noValidate
                 autoComplete="off"
             >
-                <TextField label="Device name" variant="outlined" value={props.host.name} />
+                <TextField key="Sample dev name" label="Device name" variant="outlined" value={props.host.name} />
                 {props.host.cards.map((card) => {
                     return card.interfaces.map(
                         (inter) => {
-                            return (<TextField label="IP" variant="outlined" InputProps={{
+                            return (<TextField key={inter.id} label="IP" variant="outlined" InputProps={{
                                 readOnly: true,
                             }} value={inter.ip} />)
                         }

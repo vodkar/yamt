@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Canvas, NodeData, CanvasProps } from "reaflow";
 import { fetchHosts, Host } from "../../api/Host";
 import { fetchTopology, ITopology } from "../../api/Topology";
+import { getHostByInterfaceId } from "./computations";
 import HostNode from "./HostNode";
 
 interface INetworkGridProps extends Partial<CanvasProps> {
@@ -21,15 +22,41 @@ function NetworkGrid(props: INetworkGridProps) {
   }, [])
 
   return (
-    <Canvas height={window.innerHeight} nodes={hosts.map((host: Host) => {
-      return {
-        id: host.id,
-        text: host.name == null ? host.name : `MACs: ${host.cards.map((card) => card.mac).join("\n")}`,
-        data: host,
-        ports: host.cards.flatMap((card) => card.interfaces.map((inter) => { return { id: inter.id, height: 10, width: 10, side: "SOUTH" } }))
-      }
-    })}
-      node={<HostNode onHostClick={props.onHostClick} />} />
+    <>
+      <style>
+        {`
+.blue {
+  fill: blue;
+}
+.green {
+  fill: green;
+}
+`}
+      </style>
+      <Canvas arrow={null} height={window.innerHeight} nodes={hosts.map((host: Host) => {
+
+        return {
+          id: host.id,
+          text: host.name == null ? host.name : `MACs: ${host.cards.map((card) => card.mac).join("\n")}`,
+          data: host,
+          ports: host.cards.flatMap((card) => card.interfaces.map(
+            (inter) => { return { id: inter.id, height: 10, width: 10, side: "SOUTH" } }
+          ))
+        }
+      })}
+        edges={
+          topology?.interface_connections.map((inter) => {
+            return {
+              id: `${inter.origin.id}-${inter.destination.id}`,
+              from: getHostByInterfaceId(hosts, inter.origin.id)?.id,
+              to: getHostByInterfaceId(hosts, inter.destination.id)?.id,
+              fromPort: inter.origin.id,
+              toPort: inter.destination.id
+            }
+          })
+        }
+        node={<HostNode onHostClick={props.onHostClick} />} />
+    </>
   );
 }
 
