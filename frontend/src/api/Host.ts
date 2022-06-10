@@ -31,3 +31,4 @@ export function fetchHosts(callback: (hosts: THostList) => void) {
         (response: HostResponse) => { callback(response.data) }
     )
 };
+

@@ -1,6 +1,5 @@
-import { height } from "@mui/system";
 import React, { useEffect, useState } from "react";
-import { Canvas, NodeData, CanvasProps } from "reaflow";
+import { Canvas, CanvasProps } from "reaflow";
 import { fetchHosts, Host } from "../../api/Host";
 import { fetchTopology, ITopology } from "../../api/Topology";
 import { getHostByInterfaceId } from "./computations";
@@ -23,24 +22,17 @@ function NetworkGrid(props: INetworkGridProps) {
 
   return (
     <>
-      <style>
-        {`
-.blue {
-  fill: blue;
-}
-.green {
-  fill: green;
-}
-`}
-      </style>
       <Canvas arrow={null} height={window.innerHeight} nodes={hosts.map((host: Host) => {
-
         return {
           id: host.id,
           text: host.name == null ? host.name : `MACs: ${host.cards.map((card) => card.mac).join("\n")}`,
           data: host,
           ports: host.cards.flatMap((card) => card.interfaces.map(
-            (inter) => { return { id: inter.id, height: 10, width: 10, side: "SOUTH" } }
+            (inter) => {
+              return {
+                id: inter.id, height: 10, width: 10, side: "SOUTH", ip: inter.ip
+              }
+            }
           ))
         }
       })}

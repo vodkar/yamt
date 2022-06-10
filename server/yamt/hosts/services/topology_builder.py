@@ -11,6 +11,7 @@ from .traceroute import traceroute
 class TopologyBuilder:
     def __init__(self, host_storage: HostStorage) -> None:
         self._host_storage = host_storage
+        self._topology: Topology | None = None
 
     def build_topology(self, interfaces: Iterable[IPInterface]) -> Topology:
         connections: list[Connection[IPInterface]] = []
@@ -18,6 +19,8 @@ class TopologyBuilder:
             for i in range(1, len(routes)):
                 origin, dest = self.get_or_save_interface(routes[i - 1], routes[i])
                 connections.append(Connection(origin=origin, destination=dest))
+        if self._topology:
+            connections.extend(self._topology.interface_connections)
         self._topology = Topology(interface_connections=connections)
         return self._topology
 
