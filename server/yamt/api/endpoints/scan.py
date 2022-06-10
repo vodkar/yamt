@@ -1,19 +1,20 @@
-from typing import Any, Callable
-
 from fastapi import APIRouter, BackgroundTasks
 
 from yamt.api.schemas.scan import NetworksToScan
-from yamt.api.utils import run_task
 from yamt.common.helpers import get_logger
 from yamt.hosts import get_host_storage, get_topology_builder
 from yamt.hosts.models.host import Host
 from yamt.hosts.services import get_scanner
+
+_networks: NetworksToScan = NetworksToScan(networks=[])
 
 
 def scan_and_save_networks(networks: NetworksToScan):
     logger = get_logger(__name__)
     scanner = get_scanner()
     hosts: list[Host] = []
+    global _networks
+    _networks = networks
     for network in networks.networks:
         for host in scanner.scan_network(network):
             logger.fatal(f"Scanned {network}, found: {host.dict()}")
@@ -27,6 +28,11 @@ def scan_and_save_networks(networks: NetworksToScan):
 
 
 scan_router = APIRouter()
+
+
+@scan_router.get("/")
+def get_networks() -> NetworksToScan:
+    return _networks
 
 
 @scan_router.put("/")

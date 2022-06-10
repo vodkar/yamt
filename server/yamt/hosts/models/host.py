@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import IPvAnyAddress
 
-from yamt.common.model import YamtModelWithId
+from yamt.common.model import YamtModel, YamtModelWithId
 from yamt.hosts.models.ip_interface import IPInterface
 from yamt.hosts.models.mac_address import MacAddress
 
@@ -28,3 +28,7 @@ class Host(YamtModelWithId):
         if card := [card for card in self.cards if id == card.id]:
             return card[0]
         return None
+
+
+class PatchHostDTO(YamtModel):
+    name: str | None

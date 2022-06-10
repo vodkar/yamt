@@ -7,6 +7,7 @@ import yaml
 from pydantic import IPvAnyAddress
 
 from yamt.common.helpers import get_logger
+from yamt.hosts.models.host import PatchHostDTO
 from yamt.hosts.models.ip_interface import IPInterface
 from yamt.hosts.models.mac_address import MacAddress
 from yamt.hosts.models.network_card import NetworkCard
@@ -99,6 +100,15 @@ class HostStorage:
             if interface.ip == ip:
                 return interface
         return None
+
+    def update_host_data(self, id: UUID, dto: PatchHostDTO) -> Host:
+        if host := self.get_host(id):
+            for key, item in dto.dict().items():
+                setattr(host, key, item)
+            self._save()
+            return host
+        else:
+            raise ValueError(f"Не удалось найти хост с идентификатором {id}")
 
     def add_interfaces(self, interfaces: Iterable[IPInterface]):
         self._interfaces.extend(interfaces)
