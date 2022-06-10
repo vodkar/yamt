@@ -5,6 +5,7 @@ interface ModelWithUUID {
 
 }
 
+
 export interface IPInterface extends ModelWithUUID {
     ip: string;
 }
@@ -13,9 +14,13 @@ export interface NetworkCard extends ModelWithUUID {
     mac: string;
     interfaces: IPInterface[]
 }
-export interface Host extends ModelWithUUID {
+
+export interface Host extends ModelWithUUID, PatchDTOHost {
     name: string;
     cards: NetworkCard[]
+}
+export interface PatchDTOHost {
+    name?: string;
 }
 
 
@@ -25,6 +30,10 @@ interface HostResponse {
     data: THostList
 }
 
+interface PatchHostResponse {
+    data: Host
+}
+
 
 export function fetchHosts(callback: (hosts: THostList) => void) {
     axios.get("http://127.0.0.1:8000/hosts/").then(
@@ -32,3 +41,8 @@ export function fetchHosts(callback: (hosts: THostList) => void) {
     )
 };
 
+export function updateHost(id: string, dto: PatchDTOHost, callback?: (host: Host) => void) {
+    axios.patch(`http://127.0.0.1:8000/hosts/${id}`, dto).then(
+        (response: PatchHostResponse) => { callback!(response.data) }
+    )
+}
