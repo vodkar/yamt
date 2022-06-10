@@ -43,6 +43,6 @@ export function fetchHosts(callback: (hosts: THostList) => void) {
 
 export function updateHost(id: string, dto: PatchDTOHost, callback?: (host: Host) => void) {
     axios.patch(`http://127.0.0.1:8000/hosts/${id}`, dto).then(
-        (response: PatchHostResponse) => { callback!(response.data) }
+        (response: PatchHostResponse) => { callback && callback(response.data) }
     )
 }

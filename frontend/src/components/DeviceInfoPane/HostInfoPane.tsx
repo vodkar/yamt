@@ -8,11 +8,12 @@ interface IHostInfoPaneProps {
 }
 
 function HostInfoPane(props: IHostInfoPaneProps) {
-    const [name, setName] = useState<string>(props.host!.name)
+    const [name, setName] = useState<string>(props.host ? props.host.name : "")
 
     if (props.host == null || props.host == undefined) {
         return null
     }
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
     };
