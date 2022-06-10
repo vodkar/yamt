@@ -25,7 +25,7 @@ function NetworkGrid(props: INetworkGridProps) {
       <Canvas arrow={null} height={window.innerHeight} nodes={hosts.map((host: Host) => {
         return {
           id: host.id,
-          text: host.name == null ? host.name : `MACs: ${host.cards.map((card) => card.mac).join("\n")}`,
+          text: host.name ? host.name : `MACs: ${host.cards.map((card) => card.mac).join("\n")}`,
           data: host,
           ports: host.cards.flatMap((card) => card.interfaces.map(
             (inter) => {

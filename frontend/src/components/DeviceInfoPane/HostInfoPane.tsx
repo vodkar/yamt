@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Host, updateHost } from "../../api/Host";
+import { Button, Divider } from "@mui/material";
 
 interface IHostInfoPaneProps {
     host?: Host | null
@@ -10,9 +11,15 @@ interface IHostInfoPaneProps {
 function HostInfoPane(props: IHostInfoPaneProps) {
     const [name, setName] = useState<string>(props.host ? props.host.name : "")
 
+    useEffect(() => {
+        setName(props.host ? props.host.name : "");
+        console.log(name)
+    }, [])
+
     if (props.host == null || props.host == undefined) {
         return null
     }
+
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -30,7 +37,7 @@ function HostInfoPane(props: IHostInfoPaneProps) {
             >
                 <TextField
                     key="Sample dev name"
-                    label="Device name"
+                    label="Название устройства"
                     variant="outlined"
                     value={name}
                     onChange={handleChange}
@@ -47,6 +54,35 @@ function HostInfoPane(props: IHostInfoPaneProps) {
                         }
                     )
                 })}
+
+                <Box
+                    component="form"
+                    sx={{
+                        '& .MuiTextField-root': { m: 1, width: '25ch' },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
+                    <Divider style={{ margin: "20px" }} />
+                    <p style={{ margin: "10px" }}>Для получения данных по SSH введите логин и пароль</p>
+                    <div>
+                        <TextField
+                            required
+                            id="outlined-required"
+                            label="Логин"
+                        />
+                        <TextField
+                            required
+                            id="outlined-disabled"
+                            type="password"
+                            autoComplete="current-password"
+                            label="Пароль"
+                        />
+                        <div>
+                            <Button style={{ margin: "10px" }} variant="outlined">Сохранить</Button>
+                        </div>
+                    </div>
+                </Box>
             </Box>
         </>
     )
