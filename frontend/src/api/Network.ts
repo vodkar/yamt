@@ -1,9 +1,19 @@
 import axios from "axios"
 
-export function getNetworks(): string[] {
-    return ['192.168.0.0/24', '192.168.48.0/24']
+interface NetworksToScan {
+    networks: string[]
 }
 
-export function putNetworks(networks: string[]) {
-    axios.put("http://127.0.0.1:8000/networks/", { networks: networks })
+interface NetworkResponse {
+    data: NetworksToScan
+}
+
+export function getNetworks(callback: (networks: string[]) => void) {
+    axios.get("http://127.0.0.1:8000/networks/").then(
+        (resp: NetworkResponse) => { callback(resp.data.networks) }
+    )
+}
+
+export function putNetworks(networks: string[], callback: (() => void)) {
+    axios.put("http://127.0.0.1:8000/networks/", { networks: networks }).then(callback)
 }

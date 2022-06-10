@@ -1,4 +1,3 @@
-from functools import singledispatchmethod
 from typing import Generic, TypeVar
 
 from pydantic import validator
