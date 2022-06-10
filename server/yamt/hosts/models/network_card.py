@@ -7,7 +7,7 @@ from .mac_address import MacAddress
 
 
 class NetworkCard(YamtModelWithId):
-    mac: MacAddress
+    mac: MacAddress | None
     interfaces: list[IPInterface]
 
     def get_interface_by_ip(self, ip: IPvAnyAddress) -> IPInterface | None:

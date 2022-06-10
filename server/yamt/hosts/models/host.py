@@ -16,8 +16,8 @@ class Host(YamtModelWithId):
     cards: list[NetworkCard]
 
     @classmethod
-    def create_simple_host(cls, ip: IPvAnyAddress | str, mac: MacAddress | str, name: str = "") -> Host:
-        return cls(name=name, cards=[NetworkCard(mac=MacAddress(mac), interfaces=[IPInterface(ip=ip)])])
+    def create_simple_host(cls, ip: IPvAnyAddress | str, mac: MacAddress | str | None = None, name: str = "") -> Host:
+        return cls(name=name, cards=[NetworkCard(mac=mac, interfaces=[IPInterface(ip=ip)])])
 
     def get_card_by_mac(self, mac: MacAddress) -> NetworkCard | None:
         if card := [card for card in self.cards if mac == card.mac]:
