@@ -6,7 +6,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import NetworkButtonsList from "./NetworkButtonsList";
+import NetworkInfoPane from "../NetworkInfoPane/NetworkInfoPane";
 
 function ManageNetworksHeader() {
     const [open, setOpen] = useState(false);
@@ -43,7 +43,6 @@ function ManageNetworksHeader() {
                 />
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
-                <NetworkButtonsList />
             </Collapse>
         </List>
     )

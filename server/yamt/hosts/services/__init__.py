@@ -6,4 +6,4 @@ from .topology_builder import TopologyBuilder  # type: ignore
 
 
 def get_scanner() -> IPHostScanner:
-    return ARPScanner(IPv4Network("192.168.0.0/24"))
+    return ARPScanner(IPv4Network("172.30.72.0/21"))

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import Box from '@mui/material/Box';
+import { Button, Divider, Typography } from "@mui/material";
 import TextField from '@mui/material/TextField';
+import React, { useEffect, useState } from "react";
 import { Host, updateHost } from "../../api/Host";
-import { Button, Divider } from "@mui/material";
 
 interface IHostInfoPaneProps {
     host?: Host | null
@@ -16,7 +15,7 @@ function HostInfoPane(props: IHostInfoPaneProps) {
         console.log(name)
     }, [])
 
-    if (props.host == null || props.host == undefined) {
+    if (props.host == null || props.host === undefined) {
         return null
     }
 
@@ -27,19 +26,14 @@ function HostInfoPane(props: IHostInfoPaneProps) {
 
     return (
         <>
-            <Box
-                component="form"
-                sx={{
-                    '& .MuiTextField-root': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
-            >
+            <div >
+                <Typography variant="h6" m={1}>Информация об устройстве</Typography>
                 <TextField
                     key="Sample dev name"
                     label="Название устройства"
                     variant="outlined"
                     value={name}
+                    size="small"
                     onChange={handleChange}
                     onBlur={(event) => {
                         props.host && updateHost(props.host.id, { name: event.currentTarget.value })
@@ -50,40 +44,33 @@ function HostInfoPane(props: IHostInfoPaneProps) {
                         (inter) => {
                             return (<TextField key={inter.id} label="IP" variant="outlined" InputProps={{
                                 readOnly: true,
-                            }} value={inter.ip} />)
+                            }} value={inter.ip}
+                                size="small" />)
                         }
                     )
                 })}
-
-                <Box
-                    component="form"
-                    sx={{
-                        '& .MuiTextField-root': { m: 1, width: '25ch' },
-                    }}
-                    noValidate
-                    autoComplete="off"
-                >
-                    <Divider style={{ margin: "20px" }} />
-                    <p style={{ margin: "10px" }}>Для получения данных по SSH введите логин и пароль</p>
+                <Divider style={{ margin: "10px" }} />
+                <p style={{ margin: "10px" }}>Для получения данных по SSH введите логин и пароль</p>
+                <div>
+                    <TextField
+                        required
+                        id="outlined-required"
+                        label="Логин"
+                        size="small"
+                    />
+                    <TextField
+                        required
+                        id="outlined-disabled"
+                        type="password"
+                        autoComplete="current-password"
+                        label="Пароль"
+                        size="small"
+                    />
                     <div>
-                        <TextField
-                            required
-                            id="outlined-required"
-                            label="Логин"
-                        />
-                        <TextField
-                            required
-                            id="outlined-disabled"
-                            type="password"
-                            autoComplete="current-password"
-                            label="Пароль"
-                        />
-                        <div>
-                            <Button style={{ margin: "10px" }} variant="outlined">Сохранить</Button>
-                        </div>
+                        <Button style={{ margin: "8px" }} variant="outlined">Сохранить</Button>
                     </div>
-                </Box>
-            </Box>
+                </div>
+            </div>
         </>
     )
 }
