@@ -14,6 +14,6 @@ export function getNetworks(callback: (networks: string[]) => void) {
     )
 }
 
-export function putNetworks(networks: string[], callback: (() => void)) {
-    axios.put("http://127.0.0.1:8000/networks/", { networks: networks }).then(callback)
+export function addNetworks(networks: string[], callback: (() => void)) {
+    axios.post("http://127.0.0.1:8000/networks/", { networks: networks }).then(callback)
 }

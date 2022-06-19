@@ -1,7 +1,6 @@
-from ipaddress import IPv4Network
 
-from pydantic import BaseModel
+from pydantic import BaseModel, IPvAnyNetwork
 
 
-class NetworksToScan(BaseModel):
-    networks: list[IPv4Network]
+class NetworksSchema(BaseModel):
+    networks: list[IPvAnyNetwork]

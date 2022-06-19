@@ -27,7 +27,7 @@ function WorkSpacelayout() {
                     <NetworkGrid onHostClick={setSelectedHost} />
                 </Pane>{/*
     // @ts-ignore */}
-                <Pane size="30%"><HostInfoPane host={selectedHost} /></Pane>
+                <Pane size="28%"><HostInfoPane host={selectedHost} /></Pane>
             </SplitPane >
         </Wrapper>
     )

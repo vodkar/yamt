@@ -1,4 +1,4 @@
-import { Button, Divider, Typography } from "@mui/material";
+import { Box, Button, Divider, Paper, Typography } from "@mui/material";
 import TextField from '@mui/material/TextField';
 import React, { useEffect, useState } from "react";
 import { Host, updateHost } from "../../api/Host";
@@ -24,9 +24,14 @@ function HostInfoPane(props: IHostInfoPaneProps) {
         setName(event.target.value);
     };
 
+    const paperPadding = 5;
+
     return (
-        <>
-            <div >
+        <Box sx={{
+            m: 1,
+            '& .MuiTextField-root': { m: 1, width: '20ch' }
+        }} >
+            <Paper style={{ padding: paperPadding }}>
                 <Typography variant="h6" m={1}>Информация об устройстве</Typography>
                 <TextField
                     key="Sample dev name"
@@ -49,29 +54,25 @@ function HostInfoPane(props: IHostInfoPaneProps) {
                         }
                     )
                 })}
-                <Divider style={{ margin: "10px" }} />
+                <Divider style={{ marginLeft: -paperPadding, marginRight: -paperPadding }} />
                 <p style={{ margin: "10px" }}>Для получения данных по SSH введите логин и пароль</p>
-                <div>
-                    <TextField
-                        required
-                        id="outlined-required"
-                        label="Логин"
-                        size="small"
-                    />
-                    <TextField
-                        required
-                        id="outlined-disabled"
-                        type="password"
-                        autoComplete="current-password"
-                        label="Пароль"
-                        size="small"
-                    />
-                    <div>
-                        <Button style={{ margin: "8px" }} variant="outlined">Сохранить</Button>
-                    </div>
-                </div>
-            </div>
-        </>
+                <TextField
+                    required
+                    id="outlined-required"
+                    label="Логин"
+                    size="small"
+                />
+                <TextField
+                    required
+                    id="outlined-disabled"
+                    type="password"
+                    autoComplete="current-password"
+                    label="Пароль"
+                    size="small"
+                />
+                <Button style={{ margin: "8px" }} variant="outlined">Сохранить</Button>
+            </Paper>
+        </Box>
     )
 }
 

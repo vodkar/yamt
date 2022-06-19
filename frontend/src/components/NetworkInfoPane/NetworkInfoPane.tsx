@@ -17,7 +17,7 @@ import Paper from '@mui/material/Paper';
 // import ListItemText from '@mui/material/ListItemText';
 // import ListSubheader from '@mui/material/ListSubheader';
 import { useEffect, useState } from "react";
-import { getNetworks, putNetworks } from "../../api/Network";
+import { addNetworks, getNetworks } from "../../api/Network";
 import INetworkInfoProps from "./NetworkInfoProps";
 import NetworkTreeItem from "./NetworkTreeItem";
 
@@ -43,12 +43,12 @@ function NetworkInfoPane(props: INetworkInfoProps) {
     const removeNetwork = (network: string) => {
         const _networks = networks.filter((val) => val != network)
         console.log(_networks);
-        putNetworks(_networks, () => { setNetworks(_networks) });
+        addNetworks(_networks, () => { setNetworks(_networks) });
     }
 
     const addNetwork = () => {
         const _networks = networks.concat(newNetwork);
-        putNetworks(_networks, () => { setNetworks(_networks) });
+        addNetworks(_networks, () => { setNetworks(_networks) });
     }
 
 

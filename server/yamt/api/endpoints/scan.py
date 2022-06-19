@@ -1,20 +1,22 @@
+from ipaddress import IPv6Network
+
 from fastapi import APIRouter, BackgroundTasks
 
-from yamt.api.schemas.scan import NetworksToScan
+from yamt.api.schemas.scan import NetworksSchema
 from yamt.common.helpers import get_logger
-from yamt.hosts import get_host_storage, get_topology_builder
+from yamt.hosts import get_host_storage, get_network_storage, get_topology_builder
 from yamt.hosts.models.host import Host
+from yamt.hosts.network_storage import NetworkStorage
 from yamt.hosts.services import get_scanner
 
-_networks: NetworksToScan = NetworksToScan(networks=[])
+network_storage: NetworkStorage = get_network_storage()
 
 
-def scan_and_save_networks(networks: NetworksToScan):
+def scan_and_save_networks(networks: NetworksSchema):
     logger = get_logger(__name__)
     scanner = get_scanner()
     hosts: list[Host] = []
-    global _networks
-    _networks = networks
+    network_storage.add_networks(networks.networks)
     for network in networks.networks:
         for host in scanner.scan_network(network):
             logger.fatal(f"Scanned {network}, found: {host.dict()}")
@@ -31,11 +33,13 @@ scan_router = APIRouter()
 
 
 @scan_router.get("/")
-def get_networks() -> NetworksToScan:
-    return _networks
+def get_networks() -> NetworksSchema:
+    return NetworksSchema(networks=list(network_storage.get_networks()))
 
 
-@scan_router.put("/")
-def scan_network(tasks: BackgroundTasks, networks_to_scan: NetworksToScan):
+@scan_router.post("/")
+def scan_network(tasks: BackgroundTasks, networks_to_scan: NetworksSchema):
+    if any(isinstance(network, IPv6Network) for network in networks_to_scan.networks):
+        raise ValueError("IPv6 сети пока не поддерживаются")
     tasks.add_task(scan_and_save_networks, networks_to_scan)
     return {"message": "Scan is launched"}
