@@ -3,7 +3,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { TreeView } from '@mui/lab';
-import { Divider, Toolbar } from '@mui/material';
+import { Divider, Menu, TextField, Toolbar } from '@mui/material';
 // import HubIcon from '@mui/icons-material/Hub';
 // import LensIcon from '@mui/icons-material/Lens';
 import Box from '@mui/material/Box';
@@ -17,7 +17,7 @@ import Paper from '@mui/material/Paper';
 // import ListItemText from '@mui/material/ListItemText';
 // import ListSubheader from '@mui/material/ListSubheader';
 import { useEffect, useState } from "react";
-import { addNetworks, getNetworks } from "../../api/Network";
+import { addNetworks, getNetworks, NetworkWithHosts } from "../../api/Network";
 import INetworkInfoProps from "./NetworkInfoProps";
 import NetworkTreeItem from "./NetworkTreeItem";
 
@@ -33,22 +33,19 @@ const iconStyle = {
 }
 
 function NetworkInfoPane(props: INetworkInfoProps) {
-    const [networks, setNetworks] = useState<string[]>([])
+    const [networks, setNetworks] = useState<NetworkWithHosts>(new Map())
     const [newNetwork, setNetwork] = useState<string>("")
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const isMenuOpen = Boolean(anchorEl);
 
     useEffect(() => {
         getNetworks(setNetworks);
     }, [])
 
-    const removeNetwork = (network: string) => {
-        const _networks = networks.filter((val) => val != network)
-        console.log(_networks);
-        addNetworks(_networks, () => { setNetworks(_networks) });
-    }
-
     const addNetwork = () => {
-        const _networks = networks.concat(newNetwork);
-        addNetworks(_networks, () => { setNetworks(_networks) });
+        const _networks = networks.set(newNetwork, []);
+        addNetworks([newNetwork], () => { setNetworks(_networks) });
+        handleMenuClose();
     }
 
 
@@ -56,13 +53,39 @@ function NetworkInfoPane(props: INetworkInfoProps) {
         setNetwork(event.target.value);
     };
 
-    const renderTree = (nodes: RenderTree) => (
-        <NetworkTreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-            {Array.isArray(nodes.children)
+    const renderTree = (nodes: RenderTree) => {
+        console.log(nodes)
+        return (<NetworkTreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
+            {Array.isArray(nodes.children) && nodes.children.length > 0
                 ? nodes.children.map((node) => renderTree(node))
-                : null}
-        </NetworkTreeItem>
-    );
+                : [<NetworkTreeItem nodeId="not-exists" label="Нет хостов в сети" disabled />]}
+        </NetworkTreeItem>)
+    };
+
+    const handleAddNetworkOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const renderAddNetwork = (
+        <Menu
+            anchorEl={anchorEl}
+            open={isMenuOpen}
+            onClose={handleMenuClose}>
+            <TextField
+                label="IPv4 адрес сети"
+                variant="outlined"
+                size="small"
+                value={newNetwork}
+                onChange={handleNewNetworkChange}
+                style={{ marginLeft: 5, marginRight: 5 }}
+                onKeyUp={(event) => event.key === 'Enter' && addNetwork()} />
+        </Menu>
+    )
+
 
     return (
         <Box
@@ -71,7 +94,7 @@ function NetworkInfoPane(props: INetworkInfoProps) {
             <Paper>
                 <Toolbar style={{ minHeight: 0, padding: 5 }}>
                     <Box >
-                        <IconButton style={iconStyle} edge="end" >
+                        <IconButton style={iconStyle} edge="end" onClick={handleAddNetworkOpen}>
                             <AddIcon fontSize="small" />
                         </IconButton>
                         <IconButton style={iconStyle} edge="end" aria-label="delete">
@@ -87,69 +110,18 @@ function NetworkInfoPane(props: INetworkInfoProps) {
                     defaultExpandIcon={<ChevronRightIcon />}
                 >
                     {
-                        networks.map(
-                            (network) => (renderTree({ id: network, name: network, children: [{ id: Math.random().toString(), name: "192.168.1.1" }] }))
+                        Array.from(networks,
+                            ([network, hosts]) => (renderTree({
+                                id: network, name: network,
+                                children: hosts.map((host) => ({ id: host.id, name: host.ip }))
+                            }))
                         )
                     }
                 </TreeView>
             </Paper>
+            {renderAddNetwork}
         </Box>
     );
-
-    // return (
-    //     <>
-    //         <List disablePadding
-    //             subheader={
-    //                 <ListSubheader component="div" id="nested-list-subheader">
-    //                     Устройства и сеть
-    //                 </ListSubheader>
-    //             }>
-    //             {networks.map((network, index) => {
-    //                 return (
-    //                     <><ListItem disablePadding >
-    //                         <ListItemButton key={network}>
-    //                             <ListItemIcon style={{ minWidth: "30px" }} >
-    //                                 <HubIcon />
-    //                             </ListItemIcon>
-    //                             <ListItemText primary={network} />
-    //                             <IconButton id={network} onClick={(event) => {
-    //                                 removeNetwork(event.currentTarget.id);
-    //                             }} edge="end" aria-label="delete">
-    //                                 <DeleteIcon color="error" />
-    //                             </IconButton>
-    //                         </ListItemButton>
-    //                     </ListItem>
-
-    //                         <List component="div" disablePadding>
-    //                             <ListItemButton sx={{ pl: 6 }}>
-    //                                 <ListItemIcon style={{ minWidth: "30px" }} >
-    //                                     <LensIcon sx={{ fontSize: 15 }} style={{ color: "#086CA2" }} />
-    //                                 </ListItemIcon>
-    //                                 <ListItemText primary="192.168.1.11" />
-    //                             </ListItemButton>
-    //                         </List>
-    //                     </>
-    //                 )
-    //             }
-    //             )}
-    //             <Divider />
-    //             <ListItemButton key="add-network" >
-    //                 <TextField
-    //                     id="outlined-basic"
-    //                     value={newNetwork}
-    //                     onChange={handleNewNetworkChange}
-    //                     label="Добавить новую сеть"
-    //                     variant="outlined"
-    //                 />
-    //                 <IconButton id="add-network" onClick={(event) => {
-    //                     addNetwork();
-    //                 }} edge="end" aria-label="delete">
-    //                     <AddIcon />
-    //                 </IconButton>
-    //             </ListItemButton>
-    //         </List>
-    //     </>
-    // )
 }
 
 export default NetworkInfoPane

@@ -1,6 +1,11 @@
+from uuid import UUID
 
-from pydantic import BaseModel, IPvAnyNetwork
+from pydantic import BaseModel, IPvAnyAddress, IPvAnyNetwork
 
 
-class NetworksSchema(BaseModel):
+class PostNetworksSchema(BaseModel):
     networks: list[IPvAnyNetwork]
+    
+class ShortNetworkRelatedHost(BaseModel):
+    id: UUID
+    ip: IPvAnyAddress

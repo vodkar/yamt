@@ -14,7 +14,7 @@ class NetworkStorage:
     def __init__(self, yaml_path: str):
         self._yaml_path: str = yaml_path
         self._logger = get_logger(__name__, prefix="NetworkStorage")
-        self._topology: Topology
+        self._topology: Topology = Topology(interface_connections=[])
         self._networks: list[IPvAnyNetwork] = []
 
     def get_networks(self) -> Generator[IPvAnyNetwork, None, None]:
@@ -22,11 +22,9 @@ class NetworkStorage:
         self._networks = []
         with self._open_yaml() as data:
             for network in data.get("networks", []):
-                if isinstance(network, IPvAnyNetwork):
-                    self._logger.debug(f"Found network: {network}")
-                    self._networks.append(network)
-                else:
-                    raise TypeError(f"network has type: {type(network)}. Expected: IPvAnyNetwork")
+                self._logger.debug(f"Found network: {network}")
+                self._networks.append(network)
+                # raise TypeError(f"network has type: {type(network)}. Expected: IPvAnyNetwork")
 
         yield from self._networks
 

@@ -1,10 +1,12 @@
+from collections import defaultdict
 from contextlib import contextmanager
+from ipaddress import IPv4Address
 from pathlib import Path
 from typing import Any, Generator, Iterable
 from uuid import UUID
 
 import yaml
-from pydantic import IPvAnyAddress
+from pydantic import IPvAnyAddress, IPvAnyNetwork
 
 from yamt.common.helpers import get_logger
 from yamt.hosts.models.host import PatchHostDTO
@@ -49,7 +51,9 @@ class HostStorage:
                 (same_host, card.mac) for card in host.cards if (same_host := self.get_host_by_mac(card.mac))
             ]:
                 for same_host, mac in hosts_with_same_macs:
-                    if (same_card := same_host.get_card_by_mac(mac)) and (host_card := host.get_card_by_mac(mac)):
+                    if (same_card := same_host.get_card_by_mac(mac)) and (
+                        host_card := host.get_card_by_mac(mac)
+                    ):
                         for interface in host_card.interfaces:
                             self.add_interface_to_host_card(same_host.id, same_card.id, interface)
                 continue
@@ -113,6 +117,19 @@ class HostStorage:
     def add_interfaces(self, interfaces: Iterable[IPInterface]):
         self._interfaces.extend(interfaces)
         self._save()
+
+    def get_by_networks(self, networks: Iterable[IPvAnyNetwork]) -> dict[IPvAnyNetwork, dict[IPvAnyAddress, Host]]:
+        d: dict[IPvAnyNetwork, dict[IPvAnyAddress, Host]] = {network: {} for network in networks}
+
+        for host in self._hosts:
+            for card in host.cards:
+                for interface in card.interfaces:
+                    for network in d.keys():
+                        if interface.ip in network:
+                            d[network][interface.ip] = host
+                            continue
+
+        return d
 
     def _save(self):
         with open(self._yaml_path, "w") as f:
