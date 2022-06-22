@@ -1,5 +1,4 @@
-import { Node } from "reaflow";
-import { NodeProps } from "reaflow";
+import { Node, NodeProps } from "reaflow";
 import { Host } from "../../api/Host";
 import InterfacePort from "./InterfacePort";
 
@@ -9,7 +8,7 @@ interface IHostNodeProps extends Partial<NodeProps> {
 
 function HostNode(props: IHostNodeProps) {
     return (
-        <Node {...props}
+        <Node dragType="node" {...props}
             onClick={(_event, data) => props.onHostClick({ ...data.data })}
             port={<InterfacePort parentNodeHeight={props.height} parentNodeWidth={props.width} />}
         >

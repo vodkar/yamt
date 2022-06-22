@@ -3,7 +3,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { TreeView } from '@mui/lab';
-import { Divider, Menu, TextField, Toolbar } from '@mui/material';
+import { Divider, Grid, Menu, TextField, Toolbar } from '@mui/material';
 // import HubIcon from '@mui/icons-material/Hub';
 // import LensIcon from '@mui/icons-material/Lens';
 import Box from '@mui/material/Box';
@@ -18,6 +18,8 @@ import Paper from '@mui/material/Paper';
 // import ListSubheader from '@mui/material/ListSubheader';
 import { useEffect, useState } from "react";
 import { addNetworks, getNetworks, NetworkWithHosts } from "../../api/Network";
+import { getGeneralPropsFromMap } from "./computations";
+import { NetworkGeneralInfo } from './NetworkGeneralInfo';
 import INetworkInfoProps from "./NetworkInfoProps";
 import NetworkTreeItem from "./NetworkTreeItem";
 
@@ -25,7 +27,7 @@ import NetworkTreeItem from "./NetworkTreeItem";
 interface RenderTree {
     id: string;
     name: string;
-    children?: readonly RenderTree[];
+    children?: readonly RenderTree[] | null;
 }
 
 const iconStyle = {
@@ -54,11 +56,12 @@ function NetworkInfoPane(props: INetworkInfoProps) {
     };
 
     const renderTree = (nodes: RenderTree) => {
-        console.log(nodes)
         return (<NetworkTreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-            {Array.isArray(nodes.children) && nodes.children.length > 0
-                ? nodes.children.map((node) => renderTree(node))
-                : [<NetworkTreeItem nodeId="not-exists" label="Нет хостов в сети" disabled />]}
+            {Array.isArray(nodes.children) ?
+                nodes.children.length > 0 ?
+                    nodes.children.map((node) => renderTree(node))
+                    : [<NetworkTreeItem nodeId="not-exists" label="Нет хостов в сети" disabled />]
+                : []}
         </NetworkTreeItem>)
     };
 
@@ -88,39 +91,44 @@ function NetworkInfoPane(props: INetworkInfoProps) {
 
 
     return (
-        <Box
-            sx={{ m: 1 }}
+        <Grid
+            sx={{ p: 1, height: "100%" }} container direction="column" rowSpacing={1} justifyContent="space-between"
         >
-            <Paper>
-                <Toolbar style={{ minHeight: 0, padding: 5 }}>
-                    <Box >
-                        <IconButton style={iconStyle} edge="end" onClick={handleAddNetworkOpen}>
-                            <AddIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton style={iconStyle} edge="end" aria-label="delete">
-                            <DeleteIcon color="warning" fontSize="small" />
-                        </IconButton>
-                    </Box>
-                </Toolbar>
-                <Divider />
-                <TreeView
-                    aria-label="rich object"
-                    defaultCollapseIcon={<ExpandMoreIcon />}
-                    defaultExpanded={['root']}
-                    defaultExpandIcon={<ChevronRightIcon />}
-                >
-                    {
-                        Array.from(networks,
-                            ([network, hosts]) => (renderTree({
-                                id: network, name: network,
-                                children: hosts.map((host) => ({ id: host.id, name: host.ip }))
-                            }))
-                        )
-                    }
-                </TreeView>
-            </Paper>
+            <Grid  >
+                <Paper>
+                    <Toolbar style={{ minHeight: 0, padding: 5 }}>
+                        <Box >
+                            <IconButton style={iconStyle} edge="end" onClick={handleAddNetworkOpen}>
+                                <AddIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton style={iconStyle} edge="end" aria-label="delete">
+                                <DeleteIcon color="warning" fontSize="small" />
+                            </IconButton>
+                        </Box>
+                    </Toolbar>
+                    <Divider />
+                    <TreeView
+                        aria-label="rich object"
+                        defaultCollapseIcon={<ExpandMoreIcon />}
+                        defaultExpanded={['root']}
+                        defaultExpandIcon={<ChevronRightIcon />}
+                    >
+                        {
+                            Array.from(networks,
+                                ([network, hosts]) => (renderTree({
+                                    id: network, name: network,
+                                    children: hosts.map((host) => ({ id: host.id, name: host.ip, children: null }))
+                                }))
+                            )
+                        }
+                    </TreeView>
+                </Paper>
+            </Grid>
             {renderAddNetwork}
-        </Box>
+            <Grid>
+                <NetworkGeneralInfo {...getGeneralPropsFromMap(networks)} />
+            </Grid>
+        </Grid>
     );
 }
 

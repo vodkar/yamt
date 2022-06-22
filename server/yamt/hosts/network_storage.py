@@ -36,7 +36,12 @@ class NetworkStorage:
                     self._logger.debug(f"Found topology: {topology}")
                     self._topology = Topology(**topology)
                 else:
-                    raise TypeError(f"topology has type: {type(topology)}. Expected: Topology")
+                    raise TypeError(f"topology has type: {type(topology)}. Expected: dict")
+        return self._topology
+
+    def set_topology(self, topology: Topology):
+        self._topology = topology
+        self._save()
 
     def add_networks(self, networks: Iterable[IPvAnyNetwork]):
         self._networks.extend(networks)
@@ -45,7 +50,7 @@ class NetworkStorage:
     def _save(self):
         with open(self._yaml_path, "w") as f:
             yaml.dump(
-                {"networks": self._networks, "topology": self._topology or None},
+                {"networks": self._networks, "topology": self._topology.dict()},
                 f,
                 yaml.Dumper,
             )
