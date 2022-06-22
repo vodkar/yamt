@@ -35,7 +35,7 @@ interface PatchHostResponse {
 }
 
 
-export function fetchHosts(callback: (hosts: THostList) => void) {
+export function getHosts(callback: (hosts: THostList) => void) {
     axios.get("http://127.0.0.1:8000/hosts/").then(
         (response: HostResponse) => { callback(response.data) }
     )

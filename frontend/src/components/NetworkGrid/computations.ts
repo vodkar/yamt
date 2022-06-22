@@ -4,7 +4,7 @@ export function getHostByInterfaceId(hosts: Host[], interface_id: string): Host 
     for (const host of hosts) {
         for (const card of host.cards) {
             for (const inter of card.interfaces) {
-                if (inter.id == interface_id) {
+                if (inter.id === interface_id) {
                     return host
                 }
             }

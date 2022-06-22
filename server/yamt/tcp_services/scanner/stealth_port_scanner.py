@@ -1,5 +1,5 @@
 from ipaddress import IPv4Address
-from typing import AsyncGenerator, AsyncIterable, Iterable
+from typing import AsyncGenerator, AsyncIterable, Generator, Iterable
 
 import scapy.all as scapy
 
@@ -10,14 +10,14 @@ class TCPStealthPortScanner(TCPPortScanner):
     def __init__(self, timeout: int = 3):
         self._timeout = timeout
 
-    async def scan_ports(
-        self, ips: AsyncIterable[IPv4Address] | IPv4Address, port_nums: Iterable[int]
-    ) -> AsyncGenerator[tuple[IPv4Address, list[int]], None]:
+    def scan_ports(
+        self, ips: Iterable[IPv4Address] | IPv4Address, port_nums: Iterable[int]
+    ) -> Generator[tuple[IPv4Address, list[int]], None, None]:
         port_nums = list(port_nums)
         if isinstance(ips, IPv4Address):
             yield self._scan(ips, port_nums)
         else:
-            async for ip in ips:
+            for ip in ips:
                 yield self._scan(ip, port_nums)
 
     def _scan(self, ip: IPv4Address, port_nums: list[int]):

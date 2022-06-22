@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Iterable
 from uuid import UUID
 
 from pydantic import IPvAnyAddress
@@ -16,7 +17,9 @@ class Host(YamtModelWithId):
     cards: list[NetworkCard]
 
     @classmethod
-    def create_simple_host(cls, ip: IPvAnyAddress | str, mac: MacAddress | str | None = None, name: str = "") -> Host:
+    def create_simple_host(
+        cls, ip: IPvAnyAddress | str, mac: MacAddress | str | None = None, name: str = ""
+    ) -> Host:
         return cls(name=name, cards=[NetworkCard(mac=mac, interfaces=[IPInterface(ip=ip)])])
 
     def get_card_by_mac(self, mac: MacAddress) -> NetworkCard | None:
@@ -28,6 +31,11 @@ class Host(YamtModelWithId):
         if card := [card for card in self.cards if id == card.id]:
             return card[0]
         return None
+
+    def iterate_over_ips(self) -> Iterable[IPvAnyAddress]:
+        for card in self.cards:
+            for interface in card.interfaces:
+                yield interface.ip
 
 
 class PatchHostDTO(YamtModel):

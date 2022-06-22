@@ -33,17 +33,17 @@ const getDesignTokens = (mode: PaletteMode) => ({
 
 function MainPage() {
     const [mode, setMode] = React.useState<PaletteMode>('dark');
-    const colorMode = React.useMemo(
-        () => ({
-            // The dark mode switch would invoke this method
-            toggleColorMode: () => {
-                setMode((prevMode: PaletteMode) =>
-                    prevMode === 'light' ? 'dark' : 'light',
-                );
-            },
-        }),
-        [],
-    );
+    // const colorMode = React.useMemo(
+    //     () => ({
+    //         // The dark mode switch would invoke this method
+    //         toggleColorMode: () => {
+    //             setMode((prevMode: PaletteMode) =>
+    //                 prevMode === 'light' ? 'dark' : 'light',
+    //             );
+    //         },
+    //     }),
+    //     [],
+    // );
 
     const theme = React.useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
 

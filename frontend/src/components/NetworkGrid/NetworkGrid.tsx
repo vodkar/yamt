@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Canvas, CanvasProps } from "reaflow";
-import { fetchHosts, Host } from "../../api/Host";
+import { getHosts, Host } from "../../api/Host";
 import { fetchTopology, ITopology } from "../../api/Topology";
 import { getHostByInterfaceId } from "./computations";
 import HostNode from "./HostNode";
@@ -16,7 +16,7 @@ function NetworkGrid(props: INetworkGridProps) {
   const [topology, setTopology] = useState<ITopology | null>(null);
 
   useEffect(() => {
-    fetchHosts(setHosts);
+    getHosts(setHosts);
     fetchTopology(setTopology);
   }, [])
 
