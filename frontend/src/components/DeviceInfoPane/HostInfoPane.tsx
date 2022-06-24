@@ -1,14 +1,30 @@
-import { Box, Button, Divider, Paper, Typography } from "@mui/material";
+import { Box, Button, Divider, FormControl, InputLabel, Modal, OutlinedInput, Paper, Typography } from "@mui/material";
 import TextField from '@mui/material/TextField';
 import React, { useEffect, useState } from "react";
 import { Host, updateHost } from "../../api/Host";
+import { LinearProgressWithLabel } from "./LinearProgress";
 
 interface IHostInfoPaneProps {
     host?: Host | null
 }
 
+const modalStyle = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
+
 function HostInfoPane(props: IHostInfoPaneProps) {
     const [name, setName] = useState<string>(props.host ? props.host.name : "")
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     useEffect(() => {
         setName(props.host ? props.host.name : "");
@@ -54,8 +70,18 @@ function HostInfoPane(props: IHostInfoPaneProps) {
                         }
                     )
                 })}
+                <TextField
+                    key="Mac dev"
+                    label="MAC-адрес"
+                    variant="outlined"
+                    value={props.host.cards[0].mac}
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                    size="small"
+                />
                 <Divider style={{ marginLeft: -paperPadding, marginRight: -paperPadding }} />
-                <p style={{ margin: "10px" }}>Для получения данных по SSH введите логин и пароль</p>
+                <p style={{ margin: "10px" }}>Данные для доступа по SSH</p>
                 <TextField
                     required
                     id="outlined-required"
@@ -71,6 +97,62 @@ function HostInfoPane(props: IHostInfoPaneProps) {
                     size="small"
                 />
                 <Button style={{ margin: "8px" }} variant="outlined">Сохранить</Button>
+            </Paper>
+            <Paper>
+                <Typography variant="h6" m={1}>SSH мониторинг</Typography>
+                <Box sx={{
+                    m: 1,
+                    '& .MuiTextField-root': { m: 1 }
+                }} >
+                    <Typography>Версия ОС: Linux - Ubuntu 20.04.2 LTS</Typography>
+                </Box>
+                <Box sx={{
+                    m: 1,
+                    '& .MuiTextField-root': { m: 1 }
+                }} >
+                    <Typography>ЦПУ</Typography>
+                    <LinearProgressWithLabel value={1} color="info" />
+                </Box>
+                <Box sx={{
+                    m: 1,
+                    '& .MuiTextField-root': { m: 1 }
+                }} >
+                    <Typography>ОЗУ</Typography>
+                    <LinearProgressWithLabel value={58} color='warning' />
+                </Box>
+                <Divider style={{ marginLeft: -paperPadding, marginRight: -paperPadding }} />
+                <Box sx={{
+                    m: 1,
+                    '& .MuiTextField-root': { m: 1 }
+                }} >
+                    <Typography variant="h6">Поиск уязвимостей</Typography>
+                    <FormControl fullWidth sx={{ m: 1, paddingRight: 1 }}>
+                        <InputLabel htmlFor="outlined-adornment-amount">CPE</InputLabel>
+                        <OutlinedInput
+                            id="outlined-adornment-amount"
+                            value='cpe:2.3:o:canonical:ubuntu_linux:20.04.2:*:*:*:lts:*:*:*'
+                            label="CPE"
+                        />
+                        <Button style={{ marginTop: "8px" }} variant="outlined">Поиск уязвимостей в NVD</Button>
+                    </FormControl>
+                    <Modal
+                        open={false}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={modalStyle}>
+                            <Typography variant="h6">Всего уязвимостей: 2</Typography>
+                            <a id="modal-modal-title" href="https://kb.cert.org/vuls/id/605641/">
+                                CVE-2019-9516
+                            </a>
+                            <br></br>
+                            <a id="modal-modal-description" href="https://kb.cert.org/vuls/id/605641/">
+                                CVE-2019-9513
+                            </a>
+                        </Box>
+                    </Modal>
+                </Box>
+
             </Paper>
         </Box>
     )

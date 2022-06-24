@@ -1,31 +1,37 @@
 import { useEffect, useState } from "react";
-import ReactFlow, { Controls, MiniMap, useEdgesState, useNodesState } from 'react-flow-renderer';
+import ReactFlow, { addEdge, Controls, MarkerType, MiniMap, useEdgesState, useNodesState } from 'react-flow-renderer';
 import { CanvasProps } from "reaflow";
 import { getHosts, Host } from "../../api/Host";
 import { fetchTopology, ITopology } from "../../api/Topology";
 import { getHostByInterfaceId } from "./computations";
+import { FloatingConnectionLine } from "./FloatingConnectionLine";
+import FloatingEdge from "./FloatingEdge";
 
 interface INetworkGridProps extends Partial<CanvasProps> {
   onHostClick: (host: Host | null) => void;
 }
 
-
+const edgeTypes = {
+  floating: FloatingEdge,
+};
 
 function NetworkGrid(props: INetworkGridProps) {
   const [hosts, setHosts] = useState<Host[]>([]);
   const [topology, setTopology] = useState<ITopology | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const center = { x: 250, y: 25 }
-  const radius = 40;
-
+  const onConnect = (params: any) =>
+    setEdges((eds) =>
+      addEdge({ ...params, type: 'floating', markerEnd: { type: MarkerType.Arrow } }, eds)
+    );
   function setHostsSetNodes(hosts: Host[]) {
     setHosts(hosts);
     setNodes(hosts.map((host: Host) => {
       return {
         id: host.id,
         data: { label: host.name ? host.name : `MACs: ${host.cards.map((card) => card.mac).join("\n")}`, host: host },
-        position: { x: 250, y: 25 }
+        position: { x: 250, y: 25 },
+        // type: 'input',
         // ports: host.cards.flatMap((card) => card.interfaces.map(
         //   (inter) => {
         //     return {
@@ -35,18 +41,6 @@ function NetworkGrid(props: INetworkGridProps) {
         // ))
       }
     }));
-    setEdges(
-      topology ? topology.interface_connections.map((inter) => {
-
-        return {
-          id: `${inter.origin.id}-${inter.destination.id}`,
-          source: getHostByInterfaceId(hosts, inter.origin.id)?.id || "",
-          target: getHostByInterfaceId(hosts, inter.destination.id)?.id || "",
-          fromPort: inter.origin.id,
-          toPort: inter.destination.id
-        }
-      }) : []
-    );
   }
 
   function setTopologySetEdges(newTopology: ITopology) {
@@ -59,7 +53,8 @@ function NetworkGrid(props: INetworkGridProps) {
           source: getHostByInterfaceId(hosts, inter.origin.id)?.id || "",
           target: getHostByInterfaceId(hosts, inter.destination.id)?.id || "",
           fromPort: inter.origin.id,
-          toPort: inter.destination.id
+          toPort: inter.destination.id,
+          type: 'floating',
         }
       }) : []
     );
@@ -80,6 +75,9 @@ function NetworkGrid(props: INetworkGridProps) {
       onEdgesChange={onEdgesChange}
       fitView
       onNodeClick={(_, node) => props.onHostClick(node.data.host)}
+      onConnect={onConnect}
+      edgeTypes={edgeTypes}
+      connectionLineComponent={FloatingConnectionLine}
     // node={<HostNode onHostClick={props.onHostClick} />} 
     >
 

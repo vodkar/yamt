@@ -3,7 +3,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { TreeView } from '@mui/lab';
-import { Divider, Grid, Menu, TextField, Toolbar } from '@mui/material';
+import { Divider, Grid, Menu, Tab, Tabs, TextField, Toolbar } from '@mui/material';
 // import HubIcon from '@mui/icons-material/Hub';
 // import LensIcon from '@mui/icons-material/Lens';
 import Box from '@mui/material/Box';
@@ -23,6 +23,31 @@ import { NetworkGeneralInfo } from './NetworkGeneralInfo';
 import INetworkInfoProps from "./NetworkInfoProps";
 import NetworkTreeItem from "./NetworkTreeItem";
 
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box>
+                    {children}
+                </Box>
+            )}
+        </div>
+    );
+}
 
 interface RenderTree {
     id: string;
@@ -39,6 +64,7 @@ function NetworkInfoPane(props: INetworkInfoProps) {
     const [newNetwork, setNetwork] = useState<string>("")
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const isMenuOpen = Boolean(anchorEl);
+    const [activTab, setActiveTab] = useState(0);
 
     useEffect(() => {
         getNetworks(setNetworks);
@@ -72,14 +98,18 @@ function NetworkInfoPane(props: INetworkInfoProps) {
     const handleMenuClose = () => {
         setAnchorEl(null);
     };
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setActiveTab(newValue);
+    };
 
     const renderAddNetwork = (
         <Menu
             anchorEl={anchorEl}
             open={isMenuOpen}
+
             onClose={handleMenuClose}>
             <TextField
-                label="IPv4 адрес сети"
+                label="IPv4 новой сети"
                 variant="outlined"
                 size="small"
                 value={newNetwork}
@@ -88,11 +118,17 @@ function NetworkInfoPane(props: INetworkInfoProps) {
                 onKeyUp={(event) => event.key === 'Enter' && addNetwork()} />
         </Menu>
     )
+    function a11yProps(index: number) {
+        return {
+            id: `simple-tab-${index}`,
+            'aria-controls': `simple-tabpanel-${index}`,
+        };
+    }
 
 
     return (
         <Grid
-            sx={{ p: 1, height: "100%" }} container direction="column" rowSpacing={1} justifyContent="space-between"
+            sx={{ marginTop: 0.3, p: 1, height: "100%" }} container direction="column" rowSpacing={1} justifyContent="space-between"
         >
             <Grid  >
                 <Paper>
@@ -107,28 +143,35 @@ function NetworkInfoPane(props: INetworkInfoProps) {
                         </Box>
                     </Toolbar>
                     <Divider />
-                    <TreeView
-                        aria-label="rich object"
-                        defaultCollapseIcon={<ExpandMoreIcon />}
-                        defaultExpanded={['root']}
-                        defaultExpandIcon={<ChevronRightIcon />}
-                    >
-                        {
-                            Array.from(networks,
-                                ([network, hosts]) => (renderTree({
-                                    id: network, name: network,
-                                    children: hosts.map((host) => ({ id: host.id, name: host.ip, children: null }))
-                                }))
-                            )
-                        }
-                    </TreeView>
+                    <Tabs value={activTab} onChange={handleTabChange} aria-label="basic tabs example">
+                        <Tab label="Подсети" {...a11yProps(0)} />
+                        <Tab label="Устройства по группам" {...a11yProps(0)} />
+                    </Tabs>
+
+                    <TabPanel value={activTab} index={0}>
+                        <TreeView
+                            aria-label="rich object"
+                            defaultCollapseIcon={<ExpandMoreIcon />}
+                            defaultExpanded={['root']}
+                            defaultExpandIcon={<ChevronRightIcon />}
+                        >
+                            {
+                                Array.from(networks,
+                                    ([network, hosts]) => (renderTree({
+                                        id: network, name: network,
+                                        children: hosts.map((host) => ({ id: host.id, name: host.ip, children: null }))
+                                    }))
+                                )
+                            }
+                        </TreeView>
+                    </TabPanel>
                 </Paper>
             </Grid>
             {renderAddNetwork}
             <Grid>
                 <NetworkGeneralInfo {...getGeneralPropsFromMap(networks)} />
             </Grid>
-        </Grid>
+        </Grid >
     );
 }
 

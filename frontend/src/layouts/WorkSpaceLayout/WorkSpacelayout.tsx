@@ -17,7 +17,7 @@ function WorkSpacelayout() {
 
 
     return (
-        <Wrapper style={{ height: "1000px" }} >
+        <Wrapper style={{ height: "800px" }} >
             <SplitPane>{/*
     // @ts-ignore */}
                 <Pane resizerClassName="Resizer" size="20%" >
